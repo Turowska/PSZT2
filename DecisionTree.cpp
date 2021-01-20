@@ -1,11 +1,14 @@
 #include "DecisionTree.h"
+#include <iostream>
 
     int DecisionTree::buildTree(std::vector<int> D, std::vector<std::vector<float>> X, std::vector<float> Y) {
+	std::cout<<"sprawdzenie2\n";
         if (D.size() == 0 || X.size() != Y.size()) {
             std::cout << "Wrong data provided" << std::endl;
             return -1;
         }
         this->root = new Node(D, X, Y, 0);
+	std::cout<<"sprawdzenie3\n";
         return 0;
     }
 

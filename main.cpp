@@ -1,11 +1,13 @@
 ﻿#include <fstream>
 #include <string>
-#include "DecisionTree.h"
+#include <ctime>
+#include <iostream>
+#include "forest.h"
 
 #define NUM_OF_TRAINING_DATA 300
 #define DATA_FILE_NAME "boston_housing.txt"
 
-
+/*
 #define CRIM 1
 #define ZN 2,
 #define INDUS 3
@@ -19,7 +21,7 @@
 #define PTRATIO 11
 #define B 12
 #define LSTAT 13
-
+*/
 
 std::vector<int> getFeatures() {
     std::vector<int> features;
@@ -94,17 +96,21 @@ std::pair<std::vector<std::vector<float>>, std::vector<float>> testing_data() {
 
 int main(int argc, char* argv[]) {
 
+    srand(time(NULL));
+
     float tr_data[NUM_OF_TRAINING_DATA][D_SIZE + 1];
     std::pair<std::vector<std::vector<float>>, std::vector<float>> U;
 
     std::vector<int> D;
     D = getFeatures();
     U = getTrainingData();
-
+/*
     DecisionTree tree;
     if (tree.buildTree(D, U.first, U.second) == -1)
         exit(0);
-
+*/
+    Forest forest(U);
+	std::cout<<"WSZYSTKO OK\n";
     std::pair<std::vector<std::vector<float>>, std::vector<float>> test;
     test = testing_data();
     std::vector<std::vector<float>> X = test.first;
@@ -112,7 +118,8 @@ int main(int argc, char* argv[]) {
     float prediction = 0;
     float error = 0;
     for (int i = 0; i < Y.size(); i++) {
-        prediction = tree.predict(X[i]);
+       // prediction = tree.predict(X[i]);
+	prediction = forest.predict(X[i]);
         error += abs(prediction - Y[i]);
     }
 
