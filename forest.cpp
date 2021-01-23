@@ -3,7 +3,7 @@
 
 Forest::Forest(std::pair<std::vector<std::vector<float>>, std::vector<float>> test) {
 	for(int i=0; i<NUM_OF_TREE; ++i){
-		std::vector<int> D = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+		std::vector<int> D = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 		std::vector<std::vector<float>> X = test.first;
 		std::vector<float> Y = test.second;
 		std::vector<int> DTree;
@@ -24,16 +24,14 @@ Forest::Forest(std::pair<std::vector<std::vector<float>>, std::vector<float>> te
 			X.erase(X.begin()+count);
 			Y.erase(Y.begin()+count);
 		}
-		std::cout<<"sprawdzenie1\n";
 		forest_[i].buildTree(DTree, XTree, YTree);
 	}
 }
 
 float Forest::predict(std::vector<float> X) {
 	float score = 0;
-	for(int i=0; i<NUM_OF_TREE; ++i){
+	for(int i=0; i<NUM_OF_TREE; ++i)
 		score += forest_[i].predict(X);
-	}
 	score = score/NUM_OF_TREE;
 	return score;
 }
