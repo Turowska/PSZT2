@@ -22,5 +22,5 @@ float DecisionTree::predict(std::vector<float> X) {
         else
             tmp = tmp->right;
     }
-        return tmp->y;
+    return tmp->y;
 }
