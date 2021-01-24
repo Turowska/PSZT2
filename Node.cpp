@@ -1,4 +1,5 @@
 #include "Node.h"
+#include <iostream>
 
 Node::Node(std::vector<int> D, std::vector<std::vector<float>> X, std::vector<float> Y, int depth) {
     if (Y.size() < 2 || getMSE(Y) < 1 || depth == MAX_DEPTH) {

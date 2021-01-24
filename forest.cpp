@@ -24,7 +24,6 @@ Forest::Forest(std::pair<std::vector<std::vector<float>>, std::vector<float>> te
 			X.erase(X.begin()+count);
 			Y.erase(Y.begin()+count);
 		}
-		std::cout<<"sprawdzenie1\n";
 		forest_[i].buildTree(DTree, XTree, YTree);
 	}
 }
