@@ -15,7 +15,6 @@ Node::Node(std::vector<int> D, std::vector<std::vector<float>> X, std::vector<fl
     else {
         this->is_leaf = false;
         findBestSplit(D, X, Y);
-        this->d_global_indx = D[d_indx];
         std::vector<std::vector<float>> left_X;
         std::vector<std::vector<float>> right_X;
         std::vector<float> left_Y;
@@ -31,8 +30,9 @@ Node::Node(std::vector<int> D, std::vector<std::vector<float>> X, std::vector<fl
                 right_Y.push_back(Y[i]);
             }
         }
-        this->left = new Node(D, left_X, left_Y, ++depth);
-        this->right = new Node(D, right_X, right_Y, ++depth);
+        ++depth;
+        this->left = new Node(D, left_X, left_Y, depth);
+        this->right = new Node(D, right_X, right_Y, depth);
     }
 }
 
@@ -42,14 +42,15 @@ void Node::findBestSplit(std::vector<int> D, std::vector<std::vector<float>> X, 
     float min_mse = 999999;
     int min_mse_id = 0;
     float min_mse_value = 0;
-    for (int i = 0; i < D.size(); i++) {
-        for (int j = 0; j < X.size(); j++)
-            d_data.push_back(X[j][i]);
+    for (auto d : D) {
+        for (int j = 0; j < X.size(); j++){
+            d_data.push_back(X[j][d]);
+        }
         d_mse = getMinMSE(d_data, Y);
         if (d_mse.first < min_mse) {
             min_mse = d_mse.first;
             min_mse_value = d_mse.second;
-            min_mse_id = i;
+            min_mse_id = d;
         }
         d_data.clear();
     }

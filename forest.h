@@ -6,19 +6,19 @@
 
 #define NUM_OF_TREE 10
 
-#define CRIM 1
-#define ZN 2,
-#define INDUS 3
-#define CHAS 4
-#define NOX 5
-#define RM 6
-#define AGE 7
-#define DIS 8
-#define RAD 9
-#define TAX 10
-#define PTRATIO 11
-#define B 12
-#define LSTAT 13
+#define CRIM 0
+#define ZN 1
+#define INDUS 2
+#define CHAS 3
+#define NOX 4
+#define RM 5
+#define AGE 6
+#define DIS 7
+#define RAD 8
+#define TAX 9
+#define PTRATIO 10
+#define BN 11
+#define LSTAT 12
 
 class Forest {
 
