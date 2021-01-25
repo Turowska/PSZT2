@@ -8,6 +8,7 @@
 
 #define NUM_OF_TRAINING_DATA 400
 #define DATA_FILE_NAME "boston_housing.txt"
+#define WRITE_DATA_FILE "wyniki.txt"
 
 std::vector<int> getFeatures() {
     std::vector<int> features;
@@ -25,8 +26,8 @@ std::pair<std::vector<std::vector<float>>, std::vector<float>> getTrainingData()
     std::vector<float> x;
     std::vector<float> Y;
 
-    for (int i = 0; i < NUM_OF_TRAINING_DATA; i++) {
-        for (int j = 0; j < D_SIZE; j++) {
+    for (int i = 0; i < NUM_OF_TRAINING_DATA; ++i) {
+        for (int j = 0; j < D_SIZE; ++j) {
             data_file >> tmp;
             x.push_back(tmp);
         }
@@ -75,10 +76,22 @@ std::pair<std::vector<std::vector<float>>, std::vector<float>> testing_data() {
     return training_data;
 }
 
+void writeData(std::vector<float> Y, std::vector<float> Y1, std::vector<float> Y2) {
+    std::fstream data_file;
+    data_file.open(WRITE_DATA_FILE, std::ios::out);
+    data_file << "Y:\tY1:\tbłąd1:\tY2:\tbłąd2:\n";
+    data_file << std::fixed;
+    data_file.precision(4);
+    for(int i=0; i<Y.size(); ++i){
+	data_file << Y[i] <<"\t" << Y1[i] <<"\t" << abs(Y1[i] - Y[i]) << "\t" << Y2[i] <<"\t" << abs(Y2[i] - Y[i]) << std::endl;
+    }
+    data_file.close();
+    return;
+}
+
 
 int main(int argc, char* argv[]) {
     srand(time(NULL));
-    //float tr_data[NUM_OF_TRAINING_DATA][D_SIZE + 1];
     std::pair<std::vector<std::vector<float>>, std::vector<float>> U;
 
     std::vector<int> D;
@@ -103,24 +116,36 @@ var_type.setTo(cv::Scalar(CV_VAR_NUMERICAL));
     std::vector<std::vector<float>> X = test.first;
     std::vector<float> Y = test.second;
 
-    float prediction = 0;
-    float max_error = 0;
-    float error = 0;
+    float max_error1 = 0;
+    float error1 = 0;
+
+    float max_error2 = 0;
+    float error2 = 0;
 
     cv::Mat TX = cv::Mat(1, D_SIZE, CV_32F);
+    std::vector<float> Y1, Y2;
     for (int i = 0; i < Y.size(); i++) {
-        prediction = forest.predict(X[i]);
+        Y1.push_back(forest.predict(X[i]));
 	for(int x=0; x<D_SIZE; ++x){
 	    TX.at<float>(cv::Point(x, 0)) = X.at(i).at(x);
 	}
-	//prediction = trees.predict(TX);
-        if(abs(prediction - Y[i]) > max_error)
-            max_error = abs(prediction - Y[i]);
-        error += abs(prediction - Y[i]);
+	Y2.push_back(trees.predict(TX));
+        if(abs(Y1[i] - Y[i]) > max_error1)
+            max_error1 = abs(Y1[i] - Y[i]);
+        error1 += abs(Y1[i] - Y[i]);
+        if(abs(Y2[i] - Y[i]) > max_error2)
+            max_error2 = abs(Y2[i] - Y[i]);
+        error2 += abs(Y2[i] - Y[i]);
     }
 
+    writeData(Y, Y1, Y2);
+
     std::cout << "Number of predictions: " << Y.size() << std::endl;
-    std::cout << "Average error: " << error / Y.size() << std::endl;
-    std::cout << "Max error: " << max_error << std::endl;
+    std::cout << "Average error: " << error1 / Y.size() << std::endl;
+    std::cout << "Max error: " << max_error1 << std::endl;
+    std::cout << std::endl;
+    std::cout << "Number of predictions: " << Y.size() << std::endl;
+    std::cout << "Average error: " << error2 / Y.size() << std::endl;
+    std::cout << "Max error: " << max_error2 << std::endl;
     return 0;
 }

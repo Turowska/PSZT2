@@ -35,10 +35,3 @@ float Forest::predict(std::vector<float> X) {
 	score = score/NUM_OF_TREE;
 	return score;
 }
-
-
-Forest::~Forest() {
-	/*for(int i=0; i<NUM_OF_TREE; ++i) {
-		delete forest_[i];
-	}*/
-}
