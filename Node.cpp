@@ -36,6 +36,7 @@ Node::Node(std::vector<int> D, std::vector<std::vector<float>> X, std::vector<fl
     }
 }
 
+//funkcja wyznacza najlepszy podział i zapisuje potrzebne informacje w strukturze węzła
 void Node::findBestSplit(std::vector<int> D, std::vector<std::vector<float>> X, std::vector<float> Y) {
     std::vector<float> d_data;
     std::pair<float, float> d_mse;
@@ -58,6 +59,7 @@ void Node::findBestSplit(std::vector<int> D, std::vector<std::vector<float>> X, 
     this->d_value = min_mse_value;
 }
 
+//funkcja wyznaczająca najlepszy podział dla danego atrybutu
 std::pair<float, float> Node::getMinMSE(std::vector<float> d_data, std::vector<float> Y) {
     std::vector<float> Y1_after_division;
     std::vector<float> Y2_after_division;
@@ -96,6 +98,7 @@ std::pair<float, float> Node::getMinMSE(std::vector<float> d_data, std::vector<f
     return toReturn;
 }
 
+//zwraca obliczone MSE dla danego zbioru wartości
 float Node::getMSE(std::vector<float> Y) {
     float mean = 0;
     float mse = 0;
