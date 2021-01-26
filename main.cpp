@@ -7,6 +7,7 @@
 
 //ilość danych treningowych
 #define NUM_OF_TRAINING_DATA 400
+//plik z danymi
 #define DATA_FILE_NAME "boston_housing.txt"
 //plik do zapisu wyników
 #define WRITE_DATA_FILE "wyniki2.txt"
