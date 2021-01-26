@@ -5,17 +5,11 @@
 #include "forest.h"
 #include <opencv2/ml/ml.hpp>
 
-
+//ilość danych treningowych
 #define NUM_OF_TRAINING_DATA 400
 #define DATA_FILE_NAME "boston_housing.txt"
-#define WRITE_DATA_FILE "wyniki.txt"
-
-std::vector<int> getFeatures() {
-    std::vector<int> features;
-    for (int i = 0; i < D_SIZE; i++)
-        features.push_back(i);
-    return features;
-}
+//plik do zapisu wyników
+#define WRITE_DATA_FILE "wyniki2.txt"
 
 std::pair<std::vector<std::vector<float>>, std::vector<float>> getTrainingData() {
     std::ifstream data_file;
@@ -75,7 +69,7 @@ std::pair<std::vector<std::vector<float>>, std::vector<float>> testing_data() {
     training_data.second = Y;
     return training_data;
 }
-
+//zapisywanie danych do pliku
 void writeData(std::vector<float> Y, std::vector<float> Y1, std::vector<float> Y2) {
     std::fstream data_file;
     data_file.open(WRITE_DATA_FILE, std::ios::out);
@@ -92,13 +86,13 @@ void writeData(std::vector<float> Y, std::vector<float> Y1, std::vector<float> Y
 
 int main(int argc, char* argv[]) {
     srand(time(NULL));
+    //uzyskanie danych treningowych
     std::pair<std::vector<std::vector<float>>, std::vector<float>> U;
-
-    std::vector<int> D;
-    D = getFeatures();
     U = getTrainingData();
 
+    //stworzenie i trening lasu losowego
     Forest forest(U);
+    //przekształcenie danych treningowych do odpowiedniego formatu dla lasu losowego openCV
     cv::Mat UX = cv::Mat(NUM_OF_TRAINING_DATA, D_SIZE, CV_32F);
     cv::Mat UY = cv::Mat(NUM_OF_TRAINING_DATA, 1, CV_32F);
     for(int y=0; y<NUM_OF_TRAINING_DATA; ++y){
@@ -110,7 +104,9 @@ int main(int argc, char* argv[]) {
     CvRTrees trees;
 cv::Mat var_type = cv::Mat(D_SIZE+1, 1, CV_8U);
 var_type.setTo(cv::Scalar(CV_VAR_NUMERICAL));
+    //trening lasu losowego openCV
     trees.train(UX, CV_ROW_SAMPLE, UY, cv::Mat(), cv::Mat(), var_type);
+    //uzyskanie danych testowych
     std::pair<std::vector<std::vector<float>>, std::vector<float>> test;
     test = testing_data();
     std::vector<std::vector<float>> X = test.first;
@@ -125,11 +121,15 @@ var_type.setTo(cv::Scalar(CV_VAR_NUMERICAL));
     cv::Mat TX = cv::Mat(1, D_SIZE, CV_32F);
     std::vector<float> Y1, Y2;
     for (int i = 0; i < Y.size(); i++) {
+        //uzyskanie wartości dla jednego ze zbiorów testowych z lasu losowego
         Y1.push_back(forest.predict(X[i]));
+	//przetworzenie danych do odpowiedniego formatu
 	for(int x=0; x<D_SIZE; ++x){
 	    TX.at<float>(cv::Point(x, 0)) = X.at(i).at(x);
 	}
+	//uzyskanie wartości dla jednego ze zbiorów testowych z lasu losowego openCV
 	Y2.push_back(trees.predict(TX));
+	//korekcja maksymalnego błędu i obliczenie średniego błędu dla lasów losowych
         if(abs(Y1[i] - Y[i]) > max_error1)
             max_error1 = abs(Y1[i] - Y[i]);
         error1 += abs(Y1[i] - Y[i]);
@@ -137,14 +137,15 @@ var_type.setTo(cv::Scalar(CV_VAR_NUMERICAL));
             max_error2 = abs(Y2[i] - Y[i]);
         error2 += abs(Y2[i] - Y[i]);
     }
-
+    //zapisuje dane do pliku
     writeData(Y, Y1, Y2);
-
-    std::cout << "Number of predictions: " << Y.size() << std::endl;
+    //wyświetlenie informacji końcowych: średni i maksymalny błąd
+    std::cout << "Number of predictions: " << Y.size() << std::endl <<std::endl;
+    std::cout << "Zaimplementowana wersja:" << std::endl;
     std::cout << "Average error: " << error1 / Y.size() << std::endl;
     std::cout << "Max error: " << max_error1 << std::endl;
     std::cout << std::endl;
-    std::cout << "Number of predictions: " << Y.size() << std::endl;
+    std::cout << "Wersja openCV:" << std::endl;
     std::cout << "Average error: " << error2 / Y.size() << std::endl;
     std::cout << "Max error: " << max_error2 << std::endl;
     return 0;
